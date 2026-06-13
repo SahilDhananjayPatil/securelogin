@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Login & Registration App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .home-container {
+            background: white;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .welcome-section {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .welcome-text {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .user-name {
+            color: #764ba2;
+        }
+
+        .success-message {
+            background-color: #efe;
+            color: #3c3;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid #3c3;
+            font-size: 18px;
+        }
+
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background-color: #f0f7ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .feature {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .feature-title {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .feature-desc {
+            color: #888;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .home-container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .welcome-text {
+                font-size: 20px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .logout-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="home-container">
+            <div class="icon">🎉</div>
+
+            <div class="welcome-section">
+                <h1>Welcome!</h1>
+                <!-- Thymeleaf: th:text displays the userName variable passed from the controller -->
+                <div class="welcome-text">
+                    Hello, <span class="user-name" th:text="${userName}"></span>!
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-message">
+                ✓ You have successfully logged in to your account!
+            </div>
+
+            <!-- Information Box -->
+            <div class="info-box">
+                <p>
+                    <strong>Welcome to your dashboard!</strong> Your account is secure and protected with
+                    BCrypt password encryption. You can now access all features of our application.
+                </p>
+            </div>
+
+            <!-- Features Information -->
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-title">🔒 Secure Login</div>
+                    <div class="feature-desc">Your password is encrypted using BCrypt algorithm</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">✅ Email Verification</div>
+                    <div class="feature-desc">Each email is unique and verified during registration</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">💾 Data Protection</div>
+                    <div class="feature-desc">Your data is securely stored in MySQL database</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">🚀 Fast Performance</div>
+                    <div class="feature-desc">Built with Spring Boot for optimal speed</div>
+                </div>
+            </div>
+
+            <!-- Logout Button -->
+            <!-- th:href="@{/logout}" - Thymeleaf evaluates to /logout endpoint -->
+            <div class="button-group">
+                <a th:href="@{/logout}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
