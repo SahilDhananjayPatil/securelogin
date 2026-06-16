@@ -7,83 +7,167 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * User Entity Class
+ * User Entity Class - Core user information for Instagram Clone
  * 
- * This class represents a User in the database.
- * It uses JPA (Java Persistence API) annotations to map the class to a database table.
- * - @Entity: Marks this class as a JPA entity (database table)
- * - @Table(name = "users"): Specifies the table name in the database
- * - @Id: Marks the primary key field
- * - @GeneratedValue: Auto-generates the ID value
- * - Lombok annotations (@Data, @NoArgsConstructor, @AllArgsConstructor, @Builder) 
- *   generate getters, setters, constructors, and builder pattern methods automatically
+ * This class represents a User in the database with complete profile information,
+ * authentication details, and relationships to posts, follows, and messages.
  */
 
 @Entity
-@Data // Generates getters, setters, equals, hashCode, toString
-@NoArgsConstructor // Generates no-argument constructor
-@AllArgsConstructor // Generates all-argument constructor
-@Builder // Generates builder pattern for object creation
-@Table(name = "users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "email"),
+    @UniqueConstraint(columnNames = "username")
+})
 public class User {
     
-    /**
-     * Primary key field
-     * - @Id: Marks this as primary key
-     * - @GeneratedValue(strategy = GenerationType.IDENTITY): Auto-increments the ID
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    /**
-     * User's full name
-     * - @NotBlank: Validation annotation - name cannot be null or empty
-     * - @Column(nullable = false): Database constraint - column cannot be NULL
-     */
-    @NotBlank(message = "Name cannot be empty")
-    @Column(nullable = false)
-    private String name;
+    @NotBlank(message = "Username cannot be empty")
+    @Column(nullable = false, unique = true, length = 50)
+    private String username;
     
-    /**
-     * User's email address
-     * - @Email: Validates that the email format is correct
-     * - @NotBlank: Email cannot be null or empty
-     * - @Column(nullable = false, unique = true): 
-     *   - nullable = false: Column cannot be NULL
-     *   - unique = true: Email must be unique in the database (no duplicates)
-     */
-    @Email(message = "Email should be valid")
     @NotBlank(message = "Email cannot be empty")
-    @Column(nullable = false, unique = true)
+    @Email(message = "Email should be valid")
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
     
-    /**
-     * User's password (encrypted using BCrypt)
-     * - @NotBlank: Password cannot be null or empty
-     * - @Column(nullable = false): Column cannot be NULL
-     * Note: Password is stored as encrypted text in the database
-     */
     @NotBlank(message = "Password cannot be empty")
     @Column(nullable = false)
     private String password;
     
-    /**
-     * User creation timestamp
-     * - @Column(updatable = false): This field cannot be updated once created
-     */
-    @Column(updatable = false)
-    private Long createdAt;
+    @NotBlank(message = "First name cannot be empty")
+    @Column(nullable = false, length = 100)
+    private String firstName;
     
-    /**
-     * PrePersist method - automatically called before the entity is saved to the database
-     * Sets the createdAt timestamp to the current time
-     */
+    @Column(length = 100)
+    private String lastName;
+    
+    // Profile Information
+    @Column(length = 500)
+    private String bio;
+    
+    @Column(length = 255)
+    private String website;
+    
+    @Column(length = 50)
+    private String gender;  // MALE, FEMALE, OTHER, PREFER_NOT_SAY
+    
+    @Column(length = 255)
+    private String profilePictureUrl;
+    
+    @Column(columnDefinition = "TEXT")
+    private String profilePicturePath;
+    
+    // Account Status
+    @Column(nullable = false)
+    private Boolean isActive = true;
+    
+    @Column(nullable = false)
+    private Boolean isPrivate = false;
+    
+    @Column(nullable = false)
+    private Boolean isVerified = false;
+    
+    // Timestamps
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    
+    @Column
+    private LocalDateTime lastLoginAt;
+    
+    // Relationships
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserProfile userProfile;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Post> posts = new HashSet<>();
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Like> likes = new HashSet<>();
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Comment> comments = new HashSet<>();
+    
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Follow> following = new HashSet<>();
+    
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Follow> followers = new HashSet<>();
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Story> stories = new HashSet<>();
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Reel> reels = new HashSet<>();
+    
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Message> sentMessages = new HashSet<>();
+    
+    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Message> receivedMessages = new HashSet<>();
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Notification> notifications = new HashSet<>();
+    
     @PrePersist
     protected void onCreate() {
-        createdAt = System.currentTimeMillis();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
-}
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+    
+    @Transient
+    public Long getFollowersCount() {
+        return (long) (followers != null ? followers.size() : 0);
+    }
+    
+    @Transient
+    public Long getFollowingCount() {
+        return (long) (following != null ? following.size() : 0);
+    }
+    
+    @Transient
+    public Long getPostsCount() {
+        return (long) (posts != null ? posts.size() : 0);
+    }
+    /**
+     * Convenience getter for the user's display name.
+     * If lastName is present it will return "firstName lastName",
+     * otherwise just firstName. Returns empty string when firstName is null.
+     */
+    @Transient
+    public String getName() {
+        if (firstName == null) return "";
+        if (lastName == null || lastName.isBlank()) return firstName;
+        return firstName + " " + lastName;
+    }
 
+}

@@ -1,225 +1,124 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Login & Registration App</title>
+    <title>Register - Instagram Clone</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        ::-webkit-scrollbar-track {
+            background: #2d3748; /* bg-gray-800 */
         }
-
-        .container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* bg-gray-600 */
+            border-radius: 4px;
         }
-
-        .form-container {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .error-message {
-            background-color: #fee;
-            color: #c33;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border-left: 4px solid #c33;
-        }
-
-        .success-message {
-            background-color: #efe;
-            color: #3c3;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border-left: 4px solid #3c3;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #888;
-            font-size: 14px;
-        }
-
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s;
-        }
-
-        .footer a:hover {
-            color: #764ba2;
-        }
-
-        .password-info {
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* bg-gray-500 */
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="form-container">
-            <!-- Thymeleaf:
-                 th:if="${error}" - Display element only if error message exists
-                 th:text="${error}" - Display the error message text
-            -->
-            <div class="error-message" th:if="${error}">
-                <strong>Error:</strong> <span th:text="${error}"></span>
+<body class="bg-gray-900 text-gray-100 font-sans antialiased flex items-center justify-center min-h-screen p-4">
+    <main class="w-full max-w-md">
+        <section class="bg-gray-800 shadow-lg rounded-lg p-8 space-y-6 border border-gray-700">
+            <h1 class="text-3xl font-bold text-center text-white">Register</h1>
+            <p class="text-center text-gray-400">Create your Instagram Clone account</p>
+
+            <div id="error-message" class="hidden bg-red-600 text-white p-3 rounded-md text-sm font-medium" role="alert">
+                <!-- Error messages will be displayed here -->
             </div>
 
-            <!-- Thymeleaf:
-                 th:if="${success}" - Display element only if success message exists
-                 th:text="${success}" - Display the success message text
-            -->
-            <div class="success-message" th:if="${success}">
-                <strong>Success:</strong> <span th:text="${success}"></span>
-            </div>
-
-            <h2>Create Account</h2>
-
-            <!-- Registration Form
-                 th:action="@{/register}" - Thymeleaf will evaluate to /register (the POST endpoint)
-                 method="post" - Submit form data via POST request
-            -->
-            <form th:action="@{/register}" method="post">
-                <!-- Name Field -->
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="Enter your full name"
-                        required
-                    >
+            <form id="register-form" class="space-y-5">
+                <div>
+                    <label for="fullName" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                    <input type="text" id="fullName" name="name" required
+                           class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+                           placeholder="John Doe">
                 </div>
-
-                <!-- Email Field -->
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        required
-                    >
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                    <input type="email" id="email" name="email" required
+                           class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+                           placeholder="you@example.com">
                 </div>
-
-                <!-- Password Field -->
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Enter your password"
-                        minlength="6"
-                        required
-                    >
-                    <div class="password-info">
-                        Password must be at least 6 characters long
-                    </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                    <input type="password" id="password" name="password" required
+                           class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+                           placeholder="••••••••">
                 </div>
-
-                <!-- Confirm Password Field -->
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        placeholder="Confirm your password"
-                        required
-                    >
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-1">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required
+                           class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-400"
+                           placeholder="••••••••">
                 </div>
-
-                <!-- Submit Button -->
-                <button type="submit">Register</button>
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+                    Register
+                </button>
             </form>
 
-            <!-- Link to Login Page -->
-            <div class="footer">
-                Already have an account? <a th:href="@{/login}">Login here</a>
-            </div>
-        </div>
-    </div>
+            <p class="text-center text-gray-400 text-sm">
+                Already have an account? <a href="/login" class="text-blue-500 hover:underline">Log in</a>
+            </p>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessageDiv = document.getElementById('error-message');
+
+            errorMessageDiv.classList.add('hidden'); // Hide previous errors
+
+            if (password !== confirmPassword) {
+                errorMessageDiv.textContent = 'Passwords do not match.';
+                errorMessageDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json', // Assuming JSON payload
+                    },
+                    body: JSON.stringify({
+                        name: fullName,
+                        email: email,
+                        password: password,
+                        confirmPassword: confirmPassword // Send confirmPassword for server-side validation too
+                    })
+                });
+
+                const data = await response.json(); // Assuming JSON response from backend
+
+                if (response.ok) { // HTTP status 200-299
+                    // Handle success, e.g., redirect to home page
+                    window.location.href = '/home';
+                } else {
+                    // Handle errors
+                    errorMessageDiv.textContent = data.message || 'Registration failed. Please try again.';
+                    errorMessageDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                errorMessageDiv.textContent = 'A network error occurred. Please try again later.';
+                errorMessageDiv.classList.remove('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
-
