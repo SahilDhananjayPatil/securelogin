@@ -1,0 +1,84 @@
+warning: in the working copy of 'pom.xml', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/pom.xml b/pom.xml[m
+[1mindex 0e11ef6..66f9093 100644[m
+[1m--- a/pom.xml[m
+[1m+++ b/pom.xml[m
+[36m@@ -67,6 +67,13 @@[m
+ 			<optional>true</optional>[m
+ 		</dependency>[m
+ [m
+[32m+[m		[32m<!--	Swagger	-->[m
+[32m+[m		[32m<dependency>[m
+[32m+[m			[32m<groupId>org.springdoc</groupId>[m
+[32m+[m			[32m<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>[m
+[32m+[m			[32m<version>2.5.0</version>[m
+[32m+[m		[32m</dependency>[m
+[32m+[m
+ 		<!-- Testing Dependencies -->[m
+ 		<dependency>[m
+ 			<groupId>org.springframework.boot</groupId>[m
+[1mdiff --git a/src/main/java/com/example/copilot_project/config/SecurityConfig.java b/src/main/java/com/example/copilot_project/config/SecurityConfig.java[m
+[1mindex a3c88e8..9a98478 100644[m
+[1m--- a/src/main/java/com/example/copilot_project/config/SecurityConfig.java[m
+[1m+++ b/src/main/java/com/example/copilot_project/config/SecurityConfig.java[m
+[36m@@ -2,8 +2,11 @@[m [mpackage com.example.copilot_project.config;[m
+ [m
+ import org.springframework.context.annotation.Bean;[m
+ import org.springframework.context.annotation.Configuration;[m
+[32m+[m[32mimport org.springframework.security.config.annotation.web.builders.HttpSecurity;[m
+[32m+[m[32mimport org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;[m
+ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;[m
+ import org.springframework.security.crypto.password.PasswordEncoder;[m
+[32m+[m[32mimport org.springframework.security.web.SecurityFilterChain;[m
+ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;[m
+ [m
+ /**[m
+[36m@@ -12,17 +15,45 @@[m [mimport org.springframework.web.servlet.config.annotation.WebMvcConfigurer;[m
+  * This configuration class sets up security beans for the application.[m
+  * It defines how passwords are encoded using BCrypt.[m
+  *[m
+[31m- * Note: We're using a simplified configuration without Spring Security's full filter chain[m
+[31m- * because we're handling authentication manually in the service layer.[m
+[31m- * In a production application, you would use Spring Security's more advanced features.[m
+[32m+[m[32m * IMPORTANT: Spring Security is temporarily DISABLED to allow unrestricted access.[m
+[32m+[m[32m * The SecurityFilterChain bean permits ALL requests and disables CSRF protection.[m
+[32m+[m[32m * In a production application, you would configure proper authentication and authorization.[m
+  *[m
+  * @Configuration: Marks this class as a Spring configuration class[m
+  *                 Methods with @Bean annotations are registered as Spring beans[m
+[32m+[m[32m * @EnableWebSecurity: Enables custom Spring Security configuration (overrides default)[m
+  */[m
+ [m
+ @Configuration[m
+[32m+[m[32m@EnableWebSecurity[m
+ public class SecurityConfig implements WebMvcConfigurer {[m
+ [m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * TEMPORARY: SecurityFilterChain configuration[m
+[32m+[m[32m     *[m
+[32m+[m[32m     * This bean disables Spring Security's default behavior:[m
+[32m+[m[32m     * - Allows ALL requests to pass through without authentication[m
+[32m+[m[32m     * - Disables CSRF protection[m
+[32m+[m[32m     * - Permits access to Swagger UI and all other endpoints[m
+[32m+[m[32m     *[m
+[32m+[m[32m     * To restore security later, remove or modify this bean with proper authentication rules.[m
+[32m+[m[32m     *[m
+[32m+[m[32m     * @param http The HttpSecurity object to configure[m
+[32m+[m[32m     * @return Configured SecurityFilterChain that permits all requests[m
+[32m+[m[32m     * @throws Exception if configuration fails[m
+[32m+[m[32m     */[m
+[32m+[m[32m    @Bean[m
+[32m+[m[32m    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {[m
+[32m+[m[32m        http[m
+[32m+[m[32m            .authorizeHttpRequests(authz ->[m
+[32m+[m[32m                authz.anyRequest().permitAll()  // Permit ALL requests without authentication[m
+[32m+[m[32m            )[m
+[32m+[m[32m            .csrf(csrf -> csrf.disable())  // Disable CSRF protection[m
+[32m+[m[32m            .headers(headers -> headers.disable());  // Disable security headers if needed[m
+[32m+[m
+[32m+[m[32m        return http.build();[m
+[32m+[m[32m    }[m
+[32m+[m
+     /**[m
+      * PasswordEncoder Bean[m
+      *[m

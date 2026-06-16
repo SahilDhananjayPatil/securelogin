@@ -2,8 +2,11 @@ package com.example.copilot_project.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -12,16 +15,44 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * This configuration class sets up security beans for the application.
  * It defines how passwords are encoded using BCrypt.
  *
- * Note: We're using a simplified configuration without Spring Security's full filter chain
- * because we're handling authentication manually in the service layer.
- * In a production application, you would use Spring Security's more advanced features.
+ * IMPORTANT: Spring Security is temporarily DISABLED to allow unrestricted access.
+ * The SecurityFilterChain bean permits ALL requests and disables CSRF protection.
+ * In a production application, you would configure proper authentication and authorization.
  *
  * @Configuration: Marks this class as a Spring configuration class
  *                 Methods with @Bean annotations are registered as Spring beans
+ * @EnableWebSecurity: Enables custom Spring Security configuration (overrides default)
  */
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig implements WebMvcConfigurer {
+
+    /**
+     * TEMPORARY: SecurityFilterChain configuration
+     *
+     * This bean disables Spring Security's default behavior:
+     * - Allows ALL requests to pass through without authentication
+     * - Disables CSRF protection
+     * - Permits access to Swagger UI and all other endpoints
+     *
+     * To restore security later, remove or modify this bean with proper authentication rules.
+     *
+     * @param http The HttpSecurity object to configure
+     * @return Configured SecurityFilterChain that permits all requests
+     * @throws Exception if configuration fails
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authz ->
+                authz.anyRequest().permitAll()  // Permit ALL requests without authentication
+            )
+            .csrf(csrf -> csrf.disable())  // Disable CSRF protection
+            .headers(headers -> headers.disable());  // Disable security headers if needed
+
+        return http.build();
+    }
 
     /**
      * PasswordEncoder Bean
