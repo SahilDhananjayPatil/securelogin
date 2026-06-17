@@ -111,7 +111,7 @@ public class AuthController {
 
     @GetMapping("/login")
     public String showLoginForm() {
-        log.debug("Displaying login page");
+        log.debug("Login Page is Displaying.... changes from Sahil Side");
         return "login";
     }
 
